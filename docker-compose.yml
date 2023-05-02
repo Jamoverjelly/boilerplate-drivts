@@ -1,0 +1,39 @@
+version: '3'
+services:
+  web:
+    build: .
+    ports:
+      - "3000:3000"
+    volumes:
+      - .:/usr/src/app
+      - gem_cache:/gems
+    env_file:
+      - .envv/development/database
+      - .envv/development/web
+    environment:
+      - RAILS_ENV=development
+      - VITE_RUBY_HOST=vite
+      - EDITOR=nano
+  vite:
+    build: .
+    command: ./bin/vite dev
+    ports:
+      - 3036:3036
+    volumes:
+      - .:/usr/src/app
+      - gem_cache:/gems
+    environment:
+      - DEBUG='*vite*'
+      - RAILS_ENV=development
+      - VITE_RUBY_HOST=0.0.0.0
+  db:
+    image: mysql:oracle
+    ports:
+      - "3307:3306"
+    env_file:
+      - .envv/development/database
+    volumes:
+      - mysql_data:/var/lib/mysql
+volumes:
+  mysql_data:
+  gem_cache:
